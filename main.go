@@ -1,9 +1,21 @@
 package main
 
 import (
-	"fmt"
+	backpack "github.com/idomath/CheetahWeb/backpack"
+	"net/http"
 )
 
 func main() {
-	fmt.Println("Hello world!")
+	backpack := backpack.Backpack{
+		Port:   8080,
+		Routes: []backpack.Route{},
+	}
+
+	backpack.Get("/", handleHome)
+
+	backpack.Serve()
+}
+
+func handleHome(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Welcome home"))
 }
