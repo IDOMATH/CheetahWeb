@@ -18,6 +18,9 @@ type Route struct {
 
 func (b *Backpack) Serve() {
 	fmt.Printf("Running on port: %d", b.Port)
+	for _, route := range b.Routes {
+		http.HandleFunc(route.Url, *route.Handler)
+	}
 	http.ListenAndServe(fmt.Sprintf(":%d", b.Port), nil)
 }
 
