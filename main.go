@@ -7,8 +7,9 @@ import (
 
 func main() {
 	backpack := backpack.Backpack{
-		Port:   8080,
-		Routes: []backpack.Route{},
+		Port:      8080,
+		Routes:    []backpack.Route{},
+		Handle405: handleWrongMethod,
 	}
 
 	backpack.Get("/", handleHome)
@@ -18,4 +19,8 @@ func main() {
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Welcome home"))
+}
+
+func handleWrongMethod(w http.ResponseWriter, r *http.Request) {
+	w.Write([]byte("Method not supported"))
 }
