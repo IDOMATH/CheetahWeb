@@ -12,9 +12,10 @@ type Backpack struct {
 }
 
 type Route struct {
-	Method  string
-	Url     string
-	Handler http.HandlerFunc
+	Method     string
+	Url        string
+	Middleware []func()
+	Handler    http.HandlerFunc
 }
 
 func (b *Backpack) Serve() {
