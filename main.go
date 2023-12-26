@@ -12,9 +12,9 @@ func main() {
 		Routes: make(map[string]backpack.Route),
 	}
 
-	backpack.Get("/", handleHome)
+	backpack.Get("/", logMiddleware(handleHome))
 	//TODO: figure out how to make middleware work
-	backpack.RegisterMiddleware("GET/", logMiddleware)
+	//backpack.RegisterMiddleware("GET/", logMiddleware)
 
 	backpack.Serve()
 }
@@ -23,6 +23,9 @@ func handleHome(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("Welcome home"))
 }
 
-func logMiddleware() {
-	fmt.Println("logging")
+func logMiddleware(handler http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		fmt.Println("logging")
+		handler(w, r)
+	}
 }
