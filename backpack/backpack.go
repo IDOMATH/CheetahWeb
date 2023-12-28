@@ -12,6 +12,13 @@ type Backpack struct {
 	Handle405 http.HandlerFunc
 }
 
+func NewBackpack(port int) *Backpack {
+	return &Backpack{
+		Port:   port,
+		Routes: make(map[string]Route),
+	}
+}
+
 type Route struct {
 	Method     string
 	Url        string

@@ -7,10 +7,7 @@ import (
 )
 
 func main() {
-	backpack := backpack.Backpack{
-		Port:   8080,
-		Routes: make(map[string]backpack.Route),
-	}
+	backpack := backpack.NewBackpack(8080)
 
 	backpack.Get("/", logMiddleware(handleHome))
 	//TODO: figure out how to make middleware work
