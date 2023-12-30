@@ -3,17 +3,25 @@ package main
 import (
 	"fmt"
 	backpack "github.com/idomath/CheetahWeb/backpack"
+	"log"
 	"net/http"
 )
 
 func main() {
-	backpack := backpack.NewBackpack(8080)
+	renderer, err := backpack.NewRenderer("./", "./", true)
+	if err != nil {
+		log.Fatal("failed to create renderer")
+	}
+	bp := backpack.NewBackpack(8080)
+	bp.Renderer = renderer
 
-	backpack.Get("/", logMiddleware(handleHome))
+	//TODO: what to do about passing renderer to handlers to actually render the templates
+
+	bp.Get("/", logMiddleware(handleHome))
 	//TODO: figure out how to make middleware work
 	//backpack.RegisterMiddleware("GET/", logMiddleware)
 
-	backpack.Serve()
+	bp.Serve()
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {

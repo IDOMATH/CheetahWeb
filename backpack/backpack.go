@@ -8,7 +8,7 @@ import (
 type Backpack struct {
 	Port      int
 	Routes    map[string]Route
-	Renderer  Renderer
+	Renderer  *Renderer
 	Handle405 http.HandlerFunc
 }
 
