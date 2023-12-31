@@ -77,10 +77,10 @@ func (ren *Renderer) Template(w http.ResponseWriter, r *http.Request, tmpl strin
 	return nil
 }
 
-func (r *Renderer) createTemplateCache() (map[string]*template.Template, error) {
+func (ren *Renderer) createTemplateCache() (map[string]*template.Template, error) {
 	cache := map[string]*template.Template{}
 
-	pages, err := filepath.Glob(fmt.Sprintf("%s/*.go.html", r.TemplateLocation))
+	pages, err := filepath.Glob(fmt.Sprintf("%s/*.go.html", ren.TemplateLocation))
 	if err != nil {
 		return cache, err
 	}
@@ -92,7 +92,7 @@ func (r *Renderer) createTemplateCache() (map[string]*template.Template, error) 
 			return cache, err
 		}
 
-		matches, err := filepath.Glob(fmt.Sprintf("%s/*.go.html", r.LayoutLocation))
+		matches, err := filepath.Glob(fmt.Sprintf("%s/*.go.html", ren.LayoutLocation))
 		if err != nil {
 			return cache, err
 		}
