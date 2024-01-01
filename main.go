@@ -7,12 +7,14 @@ import (
 	"net/http"
 )
 
+var bp *backpack.Backpack
+
 func main() {
-	renderer, err := backpack.NewRenderer("./", "./", true)
+	renderer, err := backpack.NewRenderer("./templates", "./layouts", true)
 	if err != nil {
 		log.Fatal("failed to create renderer")
 	}
-	bp := backpack.NewBackpack(8080)
+	bp = backpack.NewBackpack(8080)
 	bp.Renderer = renderer
 
 	//TODO: what to do about passing renderer to handlers to actually render the templates
@@ -25,7 +27,10 @@ func main() {
 }
 
 func handleHome(w http.ResponseWriter, r *http.Request) {
-	w.Write([]byte("Welcome home"))
+	err := bp.Renderer.Template(w, r, "home.go.html", &backpack.TemplateData{
+		PageTitle: "Home",
+	})
+	w.Write([]byte(err.Error()))
 }
 
 func logMiddleware(handler http.HandlerFunc) http.HandlerFunc {
