@@ -6,10 +6,11 @@ import (
 )
 
 type Backpack struct {
-	Port      int
-	Routes    map[string]Route
-	Renderer  *Renderer
-	Handle405 http.HandlerFunc
+	Port        int
+	Routes      map[string]Route
+	Middlewares Middleware
+	Renderer    *Renderer
+	Handle405   http.HandlerFunc
 }
 
 func NewBackpack(port int) *Backpack {
@@ -22,16 +23,16 @@ func NewBackpack(port int) *Backpack {
 type Route struct {
 	Method     string
 	Url        string
-	Middleware []func()
+	Middleware func()
 	Handler    http.HandlerFunc
 }
+
+type Middleware func(handlerFunc http.HandlerFunc) http.HandlerFunc
 
 func (b *Backpack) Serve() {
 	fmt.Printf("Running on port: %d", b.Port)
 	for _, route := range b.Routes {
-		for _, middleware := range route.Middleware {
-			middleware()
-		}
+		//route.Middleware()
 		http.HandleFunc(route.Url, route.Handler)
 	}
 	http.ListenAndServe(fmt.Sprintf(":%d", b.Port), nil)
@@ -121,9 +122,10 @@ func (b *Backpack) Delete(url string, handler http.HandlerFunc) {
 	b.Routes[acceptedMethod+url] = route
 }
 
-func (b *Backpack) RegisterMiddleware(route string, middleware func()) {
-	registerTo := b.Routes[route]
-	registerTo.Middleware = append(registerTo.Middleware, middleware)
+func (route *Route) RegisterMiddleware(middleware Middleware) {
+	route.Handler = func(w http.ResponseWriter, r *http.Request) {
+		middleware(route.Handler)
+	}
 }
 
 func DefaultHandle405(w http.ResponseWriter, r *http.Request) {

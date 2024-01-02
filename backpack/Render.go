@@ -46,7 +46,7 @@ func (ren *Renderer) Template(w http.ResponseWriter, r *http.Request, tmpl strin
 	var tc map[string]*template.Template
 	var err error
 
-	fmt.Println("Rendering template...")
+	fmt.Println("Rendering template: ", tmpl)
 
 	if ren.UseCache && ren.TemplateCache != nil {
 		tc = ren.TemplateCache
@@ -66,16 +66,17 @@ func (ren *Renderer) Template(w http.ResponseWriter, r *http.Request, tmpl strin
 	if !ok {
 		return errors.New("can't get template from cache")
 	}
-	fmt.Println("Got template from cache")
+	fmt.Println("Got template from cache", t)
 	buf := new(bytes.Buffer)
 
 	err = t.Execute(buf, data)
 	if err != nil {
 		//TODO: probably shouldn't explode when a template fails to execute.
-		log.Fatal(err)
+		log.Fatal("Couldn't execute: ", err)
 	}
 	fmt.Println("Executed  template")
-	_, err = buf.WriteTo(w)
+	i, err := buf.WriteTo(w)
+	fmt.Println("Wrote bytes: ", i)
 	if err != nil {
 		fmt.Println("Error writing template to browser", err)
 		return err
@@ -112,6 +113,9 @@ func (ren *Renderer) createTemplateCache() (map[string]*template.Template, error
 			}
 		}
 		cache[name] = template
+	}
+	for _, tmpl := range cache {
+		fmt.Println("Template: ", &tmpl)
 	}
 	return cache, nil
 }
